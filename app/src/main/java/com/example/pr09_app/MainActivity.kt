@@ -13,6 +13,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pr09_app.data.auth.AuthStore
+import com.example.pr09_app.data.auth.SettingsRepository
 import com.example.pr09_app.data.network.ApiClient
 import com.example.pr09_app.data.repository.DatasetRepository
 import com.example.pr09_app.ui.AuthViewModelFactory
@@ -40,7 +41,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun AppRoot() {
-    val store = AuthStore(androidx.compose.ui.platform.LocalContext.current)
+    val settingsRepository = SettingsRepository(
+        nomFitxer = "users",
+        context = androidx.compose.ui.platform.LocalContext.current
+    )
+    val store = AuthStore(settingsRepository)
     val authVm: AuthViewModel = viewModel(factory = AuthViewModelFactory(store))
 
     val repo = DatasetRepository(ApiClient.service)

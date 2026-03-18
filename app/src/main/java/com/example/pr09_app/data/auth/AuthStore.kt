@@ -1,18 +1,17 @@
 package com.example.pr09_app.data.auth
 
-import android.content.Context
-import android.content.SharedPreferences
+class AuthStore(
+    private val settingsRepository: SettingsRepository,
+) {
+    private val currentUserKey: String = KEY_CURRENT_USER
 
-class AuthStore(context: Context) {
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    fun isLoggedIn(): Boolean = currentUser().isNotBlank()
 
-    fun isLoggedIn(): Boolean = !currentUser().isNullOrBlank()
-
-    fun currentUser(): String? = prefs.getString(KEY_CURRENT_USER, null)
+    fun currentUser(): String =
+        settingsRepository.getSettingValue(currentUserKey, "")
 
     fun logout() {
-        prefs.edit().remove(KEY_CURRENT_USER).apply()
+        settingsRepository.removeSetting(KEY_CURRENT_USER)
     }
 
     fun register(username: String, password: String): RegisterResult {
@@ -20,11 +19,9 @@ class AuthStore(context: Context) {
         val p = password.trim()
 
         if (u.isBlank() || p.isBlank()) return RegisterResult.InvalidInput
-        if (prefs.contains(userKey(u))) return RegisterResult.UserAlreadyExists
+        if (settingsRepository.contains(userKey(u))) return RegisterResult.UserAlreadyExists
 
-        prefs.edit()
-            .putString(userKey(u), p)
-            .apply()
+        settingsRepository.saveSettingValue(userKey(u), p)
 
         return RegisterResult.Success
     }
@@ -35,17 +32,16 @@ class AuthStore(context: Context) {
 
         if (u.isBlank() || p.isBlank()) return LoginResult.InvalidInput
 
-        val saved = prefs.getString(userKey(u), null) ?: return LoginResult.BadCredentials
-        if (saved != p) return LoginResult.BadCredentials
+        val saved = settingsRepository.getSettingValue(userKey(u), "")
+        if (saved.isBlank() || saved != p) return LoginResult.BadCredentials
 
-        prefs.edit().putString(KEY_CURRENT_USER, u).apply()
+        settingsRepository.saveSettingValue(KEY_CURRENT_USER, u)
         return LoginResult.Success
     }
 
     private fun userKey(username: String) = "user:$username"
 
     companion object {
-        private const val PREFS_NAME = "users"
         private const val KEY_CURRENT_USER = "currentUser"
     }
 }
