@@ -27,6 +27,25 @@ val secrets = Properties().apply {
 
 fun secret(name: String): String = (secrets.getProperty(name) ?: "").trim()
 
+fun normalizeBaseUrl(raw: String): String {
+    val v = raw.trim()
+    require(v.isNotBlank()) { "BASE_URL está vacío en secrets.properties" }
+
+    val withScheme = if (v.startsWith("http://") || v.startsWith("https://")) {
+        v
+    } else if (v.startsWith("AKfy")) {
+        "https://script.google.com/macros/s/$v/"
+    } else if (v.contains("/macros/s/")) {
+        // Caso típico si se perdió el esquema pero quedó el path.
+        "https://$v"
+    } else {
+        // Fallback: tratamos el valor como ID.
+        "https://script.google.com/macros/s/${v.trim('/')}/"
+    }
+
+    return if (withScheme.endsWith("/")) withScheme else "$withScheme/"
+}
+
 android {
     namespace = "com.example.pr09_app"
     compileSdk {
@@ -43,7 +62,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         // ==================== BUILD CONFIG FIELDS ====================
-        buildConfigField("String", "BASE_URL", "\"${secret("BASE_URL")}\"")
+        buildConfigField("String", "BASE_URL", "\"${normalizeBaseUrl(secret("BASE_URL"))}\"")
         buildConfigField("String", "API_KEY", "\"${secret("API_KEY")}\"")
     }
 
