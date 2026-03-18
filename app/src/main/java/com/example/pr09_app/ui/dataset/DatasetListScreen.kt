@@ -337,16 +337,16 @@ private fun DatasetInsertTab(
                         return@Button
                     }
 
-                    val data = mapOf(
-                        "year" to yearInput.toIntOrNull() ?: 0,
+                    val data: Map<String, Any> = mapOf(
+                        "year" to (yearInput.toIntOrNull() ?: 0),
                         "country" to countryInput,
                         "winner" to winnerInput,
                         "runnerup" to runnerfupInput,
                         "third" to thirdInput,
                         "fourth" to fourthInput,
-                        "goals" to goalsInput.toIntOrNull() ?: 0,
-                        "qualified" to qualifiedInput.toIntOrNull() ?: 0,
-                        "matches" to matchesInput.toIntOrNull() ?: 0,
+                        "goals" to (goalsInput.toIntOrNull() ?: 0),
+                        "qualified" to (qualifiedInput.toIntOrNull() ?: 0),
+                        "matches" to (matchesInput.toIntOrNull() ?: 0),
                         "attendance" to attendanceInput
                     )
 
