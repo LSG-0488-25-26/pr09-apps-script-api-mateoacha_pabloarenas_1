@@ -3,15 +3,12 @@ package com.example.pr09_app.data.auth
 class AuthStore(
     private val settingsRepository: SettingsRepository,
 ) {
-    private val currentUserKey: String = KEY_CURRENT_USER
+    fun isLoggedIn(): Boolean = settingsRepository.obtenerNom().isNotBlank()
 
-    fun isLoggedIn(): Boolean = currentUser().isNotBlank()
-
-    fun currentUser(): String =
-        settingsRepository.getSettingValue(currentUserKey, "")
+    fun currentUser(): String = settingsRepository.obtenerNom()
 
     fun logout() {
-        settingsRepository.removeSetting(KEY_CURRENT_USER)
+        settingsRepository.removeSetting(KEY_NOM_USUARI)
     }
 
     fun register(username: String, password: String): RegisterResult {
@@ -35,14 +32,14 @@ class AuthStore(
         val saved = settingsRepository.getSettingValue(userKey(u), "")
         if (saved.isBlank() || saved != p) return LoginResult.BadCredentials
 
-        settingsRepository.saveSettingValue(KEY_CURRENT_USER, u)
+        settingsRepository.guardarNom(u)
         return LoginResult.Success
     }
 
     private fun userKey(username: String) = "user:$username"
 
     companion object {
-        private const val KEY_CURRENT_USER = "currentUser"
+        private const val KEY_NOM_USUARI = "nom_usuari"
     }
 }
 

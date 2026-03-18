@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun AppRoot() {
     val settingsRepository = SettingsRepository(
-        nomFitxer = "users",
+        nomFitxer = "AppSettings",
         context = androidx.compose.ui.platform.LocalContext.current
     )
     val store = AuthStore(settingsRepository)
@@ -63,7 +63,7 @@ private fun AppRoot() {
         // Endpoint de ejemplo: ajustadlo a vuestros 3 endpoints reales del Apps Script
         DatasetListScreen(
             viewModel = datasetVm,
-            type = "sheet1",
+            action = "listAll",
             onLogout = authVm::logout,
         )
     }

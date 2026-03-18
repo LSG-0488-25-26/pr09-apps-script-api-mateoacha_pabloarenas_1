@@ -5,29 +5,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pr09_app.data.repository.DatasetRepository
+import com.example.pr09_app.data.model.WorldCup
 import kotlinx.coroutines.launch
 
 class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
     private val _uiState = MutableLiveData(DatasetUiState())
     val uiState: LiveData<DatasetUiState> = _uiState
 
-    fun load(type: String) {
+    fun load(action: String) {
         _uiState.value = _uiState.value?.copy(isLoading = true, error = null)
         viewModelScope.launch {
-            val result = repo.fetchRows(type)
+            val result = repo.fetchWorldCups(action)
             _uiState.postValue(
                 result.fold(
                     onSuccess = { rows ->
                         DatasetUiState(
                             isLoading = false,
-                            rows = rows,
+                            worldCups = rows,
                             error = null
                         )
                     },
                     onFailure = { e ->
                         DatasetUiState(
                             isLoading = false,
-                            rows = emptyList(),
+                            worldCups = emptyList(),
                             error = e.message ?: "Error cargando datos"
                         )
                     }
@@ -39,7 +40,7 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
 
 data class DatasetUiState(
     val isLoading: Boolean = false,
-    val rows: List<Map<String, String>> = emptyList(),
+    val worldCups: List<WorldCup> = emptyList(),
     val error: String? = null,
 )
 

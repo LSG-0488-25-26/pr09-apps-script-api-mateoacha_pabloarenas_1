@@ -1,27 +1,23 @@
 package com.example.pr09_app.data.network
 
+import com.example.pr09_app.data.model.WorldCup
+import okhttp3.ResponseBody
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
-import com.google.gson.JsonElement
 
-/**
- * Modelo genérico para respuestas del Apps Script (doGet/doPost).
- * Se alinea con la estructura típica:
- * { status: "ok", type: "...", data: ..., error: null }
- */
-data class GetResponse<T>(
-    val status: String,
-    val type: String? = null,
-    val data: T? = null,
-    val error: String? = null,
-)
-
-interface ApiService {
-    // GET de datos: el parámetro `type` permite seleccionar endpoint "lógico" dentro de doGet(e).
+interface WorldCupApiService {
     @GET("exec")
-    suspend fun getData(
-        @Query("apiKey") apiKey: String,
-        @Query("type") type: String,
-    ): GetResponse<List<Map<String, JsonElement>>>
+    suspend fun getAllData(
+        @Query("key") key: String,
+        @Query("action") action: String = "listAll",
+    ): List<WorldCup>
+
+    @POST("exec")
+    suspend fun insertWorldCup(
+        @Body body: Map<String, Any>,
+    ): Response<ResponseBody>
 }
 

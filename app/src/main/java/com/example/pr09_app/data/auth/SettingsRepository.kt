@@ -44,5 +44,15 @@ class SettingsRepository(
     }
 
     fun contains(key: String): Boolean = sharedPreferences.contains(key)
+
+    fun guardarNom(valorNom: String) {
+        saveSettingValue(KEY_NOM_USUARI, valorNom)
+    }
+
+    fun obtenerNom(): String = getSettingValue(KEY_NOM_USUARI, "")
+
+    companion object {
+        private const val KEY_NOM_USUARI = "nom_usuari"
+    }
 }
 
