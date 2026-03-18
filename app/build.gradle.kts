@@ -6,6 +6,18 @@ plugins {
 
 import java.util.Properties
 
+// ==================== CARGA DE SECRETS ====================
+// Carga variables de secrets.properties desde carpeta app/ 
+// (Teoría: el archivo debe estar EN la carpeta app/)
+val secrets = Properties().apply {
+    val secretsFile = project.rootProject.file("app/secrets.properties")
+    if (secretsFile.exists()) {
+        secretsFile.inputStream().use { load(it) }
+    }
+}
+
+fun secret(name: String): String = (secrets.getProperty(name) ?: "").trim()
+
 android {
     namespace = "com.example.pr09_app"
     compileSdk {
@@ -20,6 +32,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // ==================== BUILD CONFIG FIELDS ====================
+        buildConfigField("String", "BASE_URL", "\"${secret("BASE_URL")}\"")
+        buildConfigField("String", "API_KEY", "\"${secret("API_KEY")}\"")
     }
 
     buildTypes {
@@ -31,28 +47,19 @@ android {
             )
         }
     }
+    
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    
     kotlinOptions {
         jvmTarget = "11"
     }
+    
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-}
-
-val secrets = Properties().apply {
-    // En la práctica, `secrets.properties` suele estar en la carpeta raíz.
-    val rootSecretsFile = rootProject.file("secrets.properties")
-    if (rootSecretsFile.exists()) {
-        rootSecretsFile.inputStream().use { load(it) }
-    } else {
-        // Fallback opcional para no bloquear compilación en entornos de pruebas.
-        val defaultsFile = rootProject.file("app/secrets.defaults.properties")
-        if (defaultsFile.exists()) defaultsFile.inputStream().use { load(it) }
     }
 }
 

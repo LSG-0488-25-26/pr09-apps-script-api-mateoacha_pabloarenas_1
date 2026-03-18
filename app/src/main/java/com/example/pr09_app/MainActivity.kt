@@ -25,6 +25,14 @@ import com.example.pr09_app.ui.dataset.DatasetListScreen
 import com.example.pr09_app.ui.dataset.DatasetViewModel
 import com.example.pr09_app.ui.theme.PR09appTheme
 
+/**
+ * MainActivity - Punto de entrada de la aplicación
+ * 
+ * Gestiona:
+ * - Inicialización de ViewModels
+ * - Navegación entre Auth y Dataset screens
+ * - Inyección de dependencias
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +47,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Raíz de la aplicación - Controla la lógica de navegación
+ */
 @Composable
 private fun AppRoot() {
+    // ==================== INICIALIZACIÓN DE DEPENDENCIAS ====================
+    
     val settingsRepository = SettingsRepository(
         nomFitxer = "AppSettings",
         context = androidx.compose.ui.platform.LocalContext.current
@@ -53,18 +66,25 @@ private fun AppRoot() {
 
     val authState by authVm.uiState.observeAsState(AuthUiState())
 
+    // ==================== CICLO DE VIDA ====================
+    
     LaunchedEffect(Unit) {
         authVm.refreshSession()
     }
 
+    // ==================== NAVEGACIÓN ====================
+    
     if (!authState.isLoggedIn) {
+        // Mostrar pantalla de Login
         AuthScreen(viewModel = authVm)
     } else {
-        // Endpoint de ejemplo: ajustadlo a vuestros 3 endpoints reales del Apps Script
+        // Mostrar pantalla principal de Datos
         DatasetListScreen(
             viewModel = datasetVm,
-            action = "listAll",
-            onLogout = authVm::logout,
+            onLogout = {
+                authVm.logout()
+                datasetVm.clearInsertState()
+            }
         )
     }
 }
