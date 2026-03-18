@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+import java.util.Properties
+
 android {
     namespace = "com.example.pr09_app"
     compileSdk {
@@ -38,18 +40,42 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+}
+
+val secrets = Properties().apply {
+    val defaultsFile = rootProject.file("secrets.defaults.properties")
+    if (defaultsFile.exists()) defaultsFile.inputStream().use { load(it) }
+    val secretsFile = rootProject.file("secrets.properties")
+    if (secretsFile.exists()) secretsFile.inputStream().use { load(it) }
+}
+
+fun secret(name: String): String =
+    (secrets.getProperty(name) ?: "").trim()
+
+android.defaultConfig {
+    buildConfigField("String", "BASE_URL", "\"${secret("BASE_URL")}\"")
+    buildConfigField("String", "API_KEY", "\"${secret("API_KEY")}\"")
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging)
+    implementation(libs.gson)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
