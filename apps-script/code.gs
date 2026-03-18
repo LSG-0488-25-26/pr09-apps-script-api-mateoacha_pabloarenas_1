@@ -101,23 +101,52 @@ function doGet(e) {
     // Validar API key
     validateApiKey(apiKey);
     
-    // ENDPOINT 1: Listar todos los mundiales
+    const action = (e.parameter.action || "").toString().trim();
+    const countryFilter = (e.parameter.country || "").toString().trim().toLowerCase();
+    let allRows = getAllRows();
+
+    // Compatibilidad: si se usa ?action=listAll / ?action=findByCountry (navegador/antiguo)
+    if (action) {
+      if (action === "listAll") {
+        return jsonResponse({
+          status: "ok",
+          type: "worldcups",
+          data: allRows,
+          count: allRows.length,
+        });
+      }
+
+      if (action === "findByCountry") {
+        if (countryFilter) {
+          allRows = allRows.filter((row) =>
+            (row.country || "").toString().toLowerCase().includes(countryFilter)
+          );
+        } else {
+          allRows = [];
+        }
+        return jsonResponse({
+          status: "ok",
+          type: "worldcups",
+          data: allRows,
+          count: allRows.length,
+        });
+      }
+    }
+
+    // ENDPOINT 1/2: Listar o filtrar con type=worldcups
     if (type === "worldcups") {
-      const countryFilter = (e.parameter.country || "").toString().trim().toLowerCase();
-      let allRows = getAllRows();
-      
       // Filtrar por país si se proporciona
       if (countryFilter) {
-        allRows = allRows.filter((row) => 
+        allRows = allRows.filter((row) =>
           (row.country || "").toString().toLowerCase().includes(countryFilter)
         );
       }
-      
+
       return jsonResponse({
         status: "ok",
         type: "worldcups",
         data: allRows,
-        count: allRows.length
+        count: allRows.length,
       });
     }
     
