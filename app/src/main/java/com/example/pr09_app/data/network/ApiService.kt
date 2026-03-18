@@ -1,6 +1,8 @@
 package com.example.pr09_app.data.network
 
 import com.example.pr09_app.data.model.GetResponse
+import com.example.pr09_app.data.model.InsertWorldCupData
+import com.example.pr09_app.data.model.InsertWorldCupRequest
 import com.example.pr09_app.data.model.WorldCup
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,12 +38,12 @@ interface WorldCupApiService {
     /**
      * POST - Inserta nuevo registro de mundial
      * 
-     * @param body Map con campos: year, country, winner, runnerup, third, fourth, goals, qualified, matches, attendance, apiKey
+     * @param body Request tipado con los campos: year, country, winner, runnerup, third, fourth, goals, qualified, matches, attendance, apiKey
      * @return GetResponse con confirmación
      */
     @POST("exec")
     suspend fun insertWorldCup(
-        @Body body: Map<String, Any>
-    ): GetResponse<Map<String, Any>>
+        @Body body: InsertWorldCupRequest
+    ): GetResponse<InsertWorldCupData>
 }
 

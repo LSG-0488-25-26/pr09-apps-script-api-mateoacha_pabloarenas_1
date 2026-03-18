@@ -1,6 +1,7 @@
 package com.example.pr09_app.data.repository
 
 import com.example.pr09_app.BuildConfig
+import com.example.pr09_app.data.model.InsertWorldCupRequest
 import com.example.pr09_app.data.model.WorldCup
 import com.example.pr09_app.data.network.WorldCupApiService
 
@@ -34,11 +35,23 @@ class DatasetRepository(private val api: WorldCupApiService) {
      * @return Result<Unit>
      */
     suspend fun insertWorldCup(body: Map<String, Any>): Result<Unit> = runCatching {
-        val payload = body.toMutableMap().apply { 
-            put("apiKey", BuildConfig.API_KEY) 
-        }
+        // Convertimos el Map de la UI a un request tipado para evitar problemas de Retrofit
+        // con `Map<String, Any>` (wildcards / type variables).
+        val request = InsertWorldCupRequest(
+            apiKey = BuildConfig.API_KEY,
+            year = (body["year"] as? Int) ?: (body["year"] as? Number)?.toInt() ?: 0,
+            country = (body["country"] as? String) ?: "",
+            winner = (body["winner"] as? String) ?: "",
+            runnerup = (body["runnerup"] as? String) ?: "",
+            third = (body["third"] as? String) ?: "",
+            fourth = (body["fourth"] as? String) ?: "",
+            goals = (body["goals"] as? Int) ?: (body["goals"] as? Number)?.toInt() ?: 0,
+            qualified = (body["qualified"] as? Int) ?: (body["qualified"] as? Number)?.toInt() ?: 0,
+            matches = (body["matches"] as? Int) ?: (body["matches"] as? Number)?.toInt() ?: 0,
+            attendance = (body["attendance"] as? String) ?: ""
+        )
 
-        val response = api.insertWorldCup(payload)
+        val response = api.insertWorldCup(request)
         if (response.status == "ok") {
             Unit
         } else {
