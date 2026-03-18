@@ -50,7 +50,7 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
                         DatasetUiState(
                             isLoading = false,
                             worldCups = emptyList(),
-                            error = exception.message ?: "Error desconocido"
+                            error = mapNetworkOrJsonError(exception)
                         )
                     }
                 )
@@ -88,7 +88,7 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
                         _uiState.value?.copy(
                             insertLoading = false,
                             insertSuccess = null,
-                            insertError = exception.message ?: "Error al insertar"
+                            insertError = mapNetworkOrJsonError(exception)
                         )
                     )
                 }
@@ -104,6 +104,21 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
             insertError = null,
             insertSuccess = null
         )
+    }
+
+    private fun mapNetworkOrJsonError(exception: Throwable): String {
+        val msg = exception.message ?: "Error desconocido"
+        val lower = msg.lowercase()
+        // Si la Web App devuelve una página de login/captcha en vez de JSON,
+        // Gson/JsonReader suele explotar con "malformed JSON" o "setLenient".
+        return when {
+            lower.contains("malformed json") ||
+                lower.contains("jsonreader") ||
+                lower.contains("setlenient") -> {
+                "La API devolvió contenido no JSON. Asegúrate de que tu Web App de Apps Script es pública (Deploy → Who has access: Anyone) y que el BASE_URL apunta al deployment correcto."
+            }
+            else -> msg
+        }
     }
 }
 

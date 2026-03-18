@@ -1,5 +1,6 @@
 package com.example.pr09_app.ui.dataset
 
+import com.example.pr09_app.BuildConfig
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,6 +60,15 @@ fun DatasetListScreen(
                 Text(
                     text = "FIFA World Cup",
                     style = MaterialTheme.typography.headlineSmall
+                )
+                // Ayuda para depurar si estamos apuntando al deployment correcto de la Web App.
+                // No mostramos toda la URL para evitar exponer datos sensibles.
+                val scriptId = BuildConfig.BASE_URL
+                    .substringAfter("/macros/s/")
+                    .substringBefore("/")
+                Text(
+                    text = "Web App id: ${scriptId.take(8)}…",
+                    style = MaterialTheme.typography.bodySmall,
                 )
                 Button(onClick = onLogout) {
                     Text("Salir")
