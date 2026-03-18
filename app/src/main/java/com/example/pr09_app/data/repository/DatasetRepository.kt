@@ -13,7 +13,10 @@ class DatasetRepository(private val api: WorldCupApiService) {
     }
 
     suspend fun insertWorldCup(body: Map<String, Any>): Result<Unit> = runCatching {
-        val response = api.insertWorldCup(body)
+        // doPost(e) valida `postData.key` (no `e.parameter.key`), así que lo metemos en el body.
+        val payload = body.toMutableMap().apply { put("key", BuildConfig.API_KEY) }
+
+        val response = api.insertWorldCup(payload)
         if (!response.isSuccessful) {
             throw RuntimeException("POST no fue exitoso. HTTP ${response.code()}")
         }

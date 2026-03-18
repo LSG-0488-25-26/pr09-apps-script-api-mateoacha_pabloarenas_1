@@ -16,6 +16,7 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
 
     fun load(action: String) {
         lastAction = action
+        // Mantener estado de inserción (éxito/error) para no "borrar" mensajes al refrescar lista.
         _uiState.value = _uiState.value?.copy(isLoading = true, error = null)
         viewModelScope.launch {
             val result = repo.fetchWorldCups(action)
@@ -27,8 +28,8 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
                             worldCups = rows,
                             error = null,
                             insertLoading = _uiState.value?.insertLoading ?: false,
-                            insertError = null,
-                            insertSuccess = null,
+                            insertError = _uiState.value?.insertError,
+                            insertSuccess = _uiState.value?.insertSuccess,
                         )
                     },
                     onFailure = { e ->
@@ -37,8 +38,8 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
                             worldCups = emptyList(),
                             error = e.message ?: "Error cargando datos",
                             insertLoading = _uiState.value?.insertLoading ?: false,
-                            insertError = null,
-                            insertSuccess = null,
+                            insertError = _uiState.value?.insertError,
+                            insertSuccess = _uiState.value?.insertSuccess,
                         )
                     }
                 )
