@@ -45,9 +45,9 @@ android {
 }
 
 val secrets = Properties().apply {
-    val defaultsFile = rootProject.file("secrets.defaults.properties")
+    val defaultsFile = rootProject.file("app/secrets.defaults.properties")
     if (defaultsFile.exists()) defaultsFile.inputStream().use { load(it) }
-    val secretsFile = rootProject.file("secrets.properties")
+    val secretsFile = rootProject.file("app/secrets.properties")
     if (secretsFile.exists()) secretsFile.inputStream().use { load(it) }
 }
 
