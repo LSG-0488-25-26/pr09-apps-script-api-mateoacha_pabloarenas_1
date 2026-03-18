@@ -3,8 +3,6 @@ package com.example.pr09_app.data.repository
 import com.example.pr09_app.BuildConfig
 import com.example.pr09_app.data.model.WorldCup
 import com.example.pr09_app.data.network.WorldCupApiService
-import okhttp3.ResponseBody
-import retrofit2.Response
 
 class DatasetRepository(private val api: WorldCupApiService) {
     suspend fun fetchWorldCups(action: String): Result<List<WorldCup>> = runCatching {
@@ -14,8 +12,12 @@ class DatasetRepository(private val api: WorldCupApiService) {
         )
     }
 
-    suspend fun insertWorldCup(body: Map<String, Any>): Result<Response<ResponseBody>> = runCatching {
-        api.insertWorldCup(body)
+    suspend fun insertWorldCup(body: Map<String, Any>): Result<Unit> = runCatching {
+        val response = api.insertWorldCup(body)
+        if (!response.isSuccessful) {
+            throw RuntimeException("POST no fue exitoso. HTTP ${response.code()}")
+        }
+        Unit
     }
 }
 
