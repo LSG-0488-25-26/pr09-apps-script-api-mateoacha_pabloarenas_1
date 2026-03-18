@@ -1,18 +1,27 @@
 package com.example.pr09_app.data.network
 
-import com.google.gson.JsonElement
 import retrofit2.http.GET
-import retrofit2.http.QueryMap
+import retrofit2.http.Query
+import com.google.gson.JsonElement
+
+/**
+ * Modelo genérico para respuestas del Apps Script (doGet/doPost).
+ * Se alinea con la estructura típica:
+ * { status: "ok", type: "...", data: ..., error: null }
+ */
+data class GetResponse<T>(
+    val status: String,
+    val type: String? = null,
+    val data: T? = null,
+    val error: String? = null,
+)
 
 interface ApiService {
-    /**
-     * Base URL debería ser algo como:
-     * - https://script.google.com/macros/s/<SCRIPT_ID>/
-     * y aquí usamos "exec" como path.
-     *
-     * Si vuestra BASE_URL ya termina en /exec, cambiad @GET("exec") por @GET("")
-     */
+    // GET de datos: el parámetro `type` permite seleccionar endpoint "lógico" dentro de doGet(e).
     @GET("exec")
-    suspend fun get(@QueryMap params: Map<String, String>): JsonElement
+    suspend fun getData(
+        @Query("apiKey") apiKey: String,
+        @Query("type") type: String,
+    ): GetResponse<List<Map<String, JsonElement>>>
 }
 

@@ -1,35 +1,31 @@
 package com.example.pr09_app.data.repository
 
+import com.example.pr09_app.BuildConfig
 import com.example.pr09_app.data.network.ApiService
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 
 class DatasetRepository(private val api: ApiService) {
-    suspend fun fetchRows(endpoint: String): Result<List<Map<String, String>>> = runCatching {
-        val json = api.get(
-            mapOf(
-                "endpoint" to endpoint
-            )
+    suspend fun fetchRows(type: String): Result<List<Map<String, String>>> = runCatching {
+        val response = api.getData(
+            apiKey = BuildConfig.API_KEY,
+            type = type
         )
-        parseRows(json)
+
+        if (response.status != "ok") {
+            throw RuntimeException(response.error ?: "Error desconocido")
+        }
+
+        val data = response.data.orEmpty()
+        data.map { row ->
+            row.mapValues { (_, value) -> jsonToString(value) }
+        }
     }
 
-    private fun parseRows(json: JsonElement): List<Map<String, String>> {
-        // Soporta respuestas típicas:
-        // 1) Array directo: [ {..}, {..} ]
-        // 2) Wrapper: { ok: true, data: [ {..} ] } o { data: [...] }
-        val data = when {
-            json.isJsonArray -> json.asJsonArray
-            json.isJsonObject && json.asJsonObject.has("data") -> json.asJsonObject.getAsJsonArray("data")
-            else -> null
-        } ?: return emptyList()
-
-        return data.mapNotNull { elem ->
-            if (!elem.isJsonObject) return@mapNotNull null
-            val obj: JsonObject = elem.asJsonObject
-            obj.entrySet().associate { (k, v) ->
-                k to (if (v.isJsonNull) "" else v.asString)
-            }
+    private fun jsonToString(element: JsonElement): String {
+        return when {
+            element.isJsonNull -> ""
+            element.isJsonPrimitive -> element.asString
+            else -> element.toString()
         }
     }
 }

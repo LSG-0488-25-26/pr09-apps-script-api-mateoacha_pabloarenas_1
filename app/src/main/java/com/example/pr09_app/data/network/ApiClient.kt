@@ -1,8 +1,6 @@
 package com.example.pr09_app.data.network
 
 import com.example.pr09_app.BuildConfig
-import okhttp3.HttpUrl
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,16 +11,7 @@ object ApiClient {
         level = HttpLoggingInterceptor.Level.BASIC
     }
 
-    private val apiKeyInterceptor = Interceptor { chain ->
-        val request = chain.request()
-        val url: HttpUrl = request.url.newBuilder()
-            .addQueryParameter("apiKey", BuildConfig.API_KEY)
-            .build()
-        chain.proceed(request.newBuilder().url(url).build())
-    }
-
     private val okHttp = OkHttpClient.Builder()
-        .addInterceptor(apiKeyInterceptor)
         .addInterceptor(logging)
         .build()
 

@@ -63,7 +63,7 @@ private fun AppRoot() {
         // Endpoint de ejemplo: ajustadlo a vuestros 3 endpoints reales del Apps Script
         DatasetListScreen(
             viewModel = datasetVm,
-            endpoint = "sheet1",
+            type = "sheet1",
             onLogout = authVm::logout,
         )
     }

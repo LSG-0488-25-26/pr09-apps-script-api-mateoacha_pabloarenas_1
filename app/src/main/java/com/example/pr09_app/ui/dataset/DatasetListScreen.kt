@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DatasetListScreen(
     viewModel: DatasetViewModel,
-    endpoint: String,
+    type: String,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,7 +40,7 @@ fun DatasetListScreen(
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { viewModel.load(endpoint) }) {
+            Button(onClick = { viewModel.load(type) }) {
                 Text("Cargar")
             }
         }

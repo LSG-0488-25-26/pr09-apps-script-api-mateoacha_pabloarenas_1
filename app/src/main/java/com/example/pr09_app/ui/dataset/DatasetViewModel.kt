@@ -11,10 +11,10 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
     private val _uiState = MutableLiveData(DatasetUiState())
     val uiState: LiveData<DatasetUiState> = _uiState
 
-    fun load(endpoint: String) {
+    fun load(type: String) {
         _uiState.value = _uiState.value?.copy(isLoading = true, error = null)
         viewModelScope.launch {
-            val result = repo.fetchRows(endpoint)
+            val result = repo.fetchRows(type)
             _uiState.postValue(
                 result.fold(
                     onSuccess = { rows ->
