@@ -16,4 +16,3 @@ local.properties
 
 # Secrets (no commitear credenciales reales)
 secrets.properties
-app/secrets.properties

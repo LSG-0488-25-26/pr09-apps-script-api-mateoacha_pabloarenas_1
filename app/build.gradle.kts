@@ -45,10 +45,15 @@ android {
 }
 
 val secrets = Properties().apply {
-    val defaultsFile = rootProject.file("app/secrets.defaults.properties")
-    if (defaultsFile.exists()) defaultsFile.inputStream().use { load(it) }
-    val secretsFile = rootProject.file("app/secrets.properties")
-    if (secretsFile.exists()) secretsFile.inputStream().use { load(it) }
+    // En la práctica, `secrets.properties` suele estar en la carpeta raíz.
+    val rootSecretsFile = rootProject.file("secrets.properties")
+    if (rootSecretsFile.exists()) {
+        rootSecretsFile.inputStream().use { load(it) }
+    } else {
+        // Fallback opcional para no bloquear compilación en entornos de pruebas.
+        val defaultsFile = rootProject.file("app/secrets.defaults.properties")
+        if (defaultsFile.exists()) defaultsFile.inputStream().use { load(it) }
+    }
 }
 
 fun secret(name: String): String =
