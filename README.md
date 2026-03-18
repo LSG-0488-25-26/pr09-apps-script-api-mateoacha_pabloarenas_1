@@ -8,7 +8,7 @@ App Android en Jetpack Compose (MVVM + Retrofit + LiveData) que consume una API 
 ![Login](captures/Captura%20de%20pantalla%202026-03-18%20194534.png)
 
 ### Registro
-![Registro](captures/Captura%20de%20pantalla%202026-03-18%201944548.png)
+![Registro](captures/Captura%20de%20pantalla%202026-03-18%20194548.png)
 
 ### GET: Ver Datos (lista)
 ![GET lista](captures/Captura%20de%20pantalla%202026-03-18%20194559.png)
