@@ -29,8 +29,12 @@ function doGet(e) {
       return createJsonResponse({ error: "Unauthorized: API KEY incorrecta" });
     }
 
-    // OJO: usando sheet activa. Si queréis hacerlo 100% fijo, cambiamos por getSheetByName("...").
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    // Evita depender de "sheet activa": usamos una pestaña fija.
+    const sheet =
+      ss.getSheetByName("PR09-Dataset") ||
+      ss.getSheetByName("Hoja 1") ||
+      ss.getActiveSheet();
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
     const rows = data.slice(1);
@@ -76,7 +80,11 @@ function doPost(e) {
       return createJsonResponse({ error: "Unauthorized" });
     }
 
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet =
+      ss.getSheetByName("PR09-Dataset") ||
+      ss.getSheetByName("Hoja 1") ||
+      ss.getActiveSheet();
 
     // ENDPOINT 3: Insertar nuevo registro al final
     // Inserta SIEMPRE las 10 columnas del header:
