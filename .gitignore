@@ -16,3 +16,7 @@ local.properties
 
 # Secrets (no commitear credenciales reales)
 secrets.properties
+
+# Delivery documentation & verification scripts (local only)
+GUIA_ENTREGA.txt
+verify_setup.sh
