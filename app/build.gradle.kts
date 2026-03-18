@@ -10,8 +10,7 @@ import java.util.Properties
 // Carga variables de secrets.properties desde carpeta app/ 
 // (Teoría: el archivo debe estar EN la carpeta app/)
 val secrets = Properties().apply {
-    // En tu proyecto, lo habitual es tener `secrets.properties` en la raíz.
-    // Mantenemos fallback por si el archivo está en `app/`.
+    
     val rootSecretsFile = project.rootProject.file("secrets.properties")
     val appSecretsFile = project.rootProject.file("app/secrets.properties")
 
