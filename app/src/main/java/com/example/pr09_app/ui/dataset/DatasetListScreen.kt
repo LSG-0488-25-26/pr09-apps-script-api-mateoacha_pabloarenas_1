@@ -51,6 +51,11 @@ fun DatasetListScreen(
 
         state.error?.let { Text(text = it, color = MaterialTheme.colorScheme.error) }
 
+        if (!state.isLoading && state.error == null && state.rows.isEmpty()) {
+            Text(text = "No hi ha dades disponibles", style = MaterialTheme.typography.bodyMedium)
+        }
+
+        if (state.rows.isNotEmpty()) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxSize(),
@@ -68,6 +73,7 @@ fun DatasetListScreen(
                     }
                 }
             }
+        }
         }
     }
 }
