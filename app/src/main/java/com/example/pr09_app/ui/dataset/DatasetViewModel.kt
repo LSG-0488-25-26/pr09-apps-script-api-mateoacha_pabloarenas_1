@@ -112,6 +112,21 @@ class DatasetViewModel(private val repo: DatasetRepository) : ViewModel() {
         // Si la Web App devuelve una página de login/captcha en vez de JSON,
         // Gson/JsonReader suele explotar con "malformed JSON" o "setLenient".
         return when {
+            lower.contains("timeout") ||
+                lower.contains("timed out") ||
+                lower.contains("timeoutexception") ||
+                lower.contains("connect timed out") -> {
+                "Se agotó el tiempo de espera al conectar con la API. Revisa la conexión y vuelve a intentarlo."
+            }
+            lower.contains("tls handshake") ||
+                lower.contains("handshake failed") -> {
+                "No se pudo establecer la conexión segura (TLS) con la API. Revisa la conexión y el BASE_URL."
+            }
+            lower.contains("failed to connect") ||
+                lower.contains("unable to resolve host") ||
+                lower.contains("unknownhost") -> {
+                "No se pudo contactar con el servidor. Revisa la conexión a Internet."
+            }
             lower.contains("malformed json") ||
                 lower.contains("jsonreader") ||
                 lower.contains("setlenient") -> {

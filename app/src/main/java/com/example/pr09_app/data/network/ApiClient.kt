@@ -21,9 +21,12 @@ object ApiClient {
 
     private val okHttp = OkHttpClient.Builder()
         .addInterceptor(logging)
-        .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-        .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-        .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        // Evita que la UI se quede “cargando” demasiado tiempo cuando falla la red.
+        .retryOnConnectionFailure(false)
+        .connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+        .callTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
         .build()
 
     private val retrofit: Retrofit = Retrofit.Builder()
