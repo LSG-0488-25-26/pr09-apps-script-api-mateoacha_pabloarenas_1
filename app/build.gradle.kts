@@ -10,9 +10,19 @@ import java.util.Properties
 // Carga variables de secrets.properties desde carpeta app/ 
 // (Teoría: el archivo debe estar EN la carpeta app/)
 val secrets = Properties().apply {
-    val secretsFile = project.rootProject.file("app/secrets.properties")
-    if (secretsFile.exists()) {
-        secretsFile.inputStream().use { load(it) }
+    // En tu proyecto, lo habitual es tener `secrets.properties` en la raíz.
+    // Mantenemos fallback por si el archivo está en `app/`.
+    val rootSecretsFile = project.rootProject.file("secrets.properties")
+    val appSecretsFile = project.rootProject.file("app/secrets.properties")
+
+    val fileToLoad = when {
+        rootSecretsFile.exists() -> rootSecretsFile
+        appSecretsFile.exists() -> appSecretsFile
+        else -> null
+    }
+
+    if (fileToLoad != null) {
+        fileToLoad.inputStream().use { load(it) }
     }
 }
 
@@ -61,14 +71,6 @@ android {
         compose = true
         buildConfig = true
     }
-}
-
-fun secret(name: String): String =
-    (secrets.getProperty(name) ?: "").trim()
-
-android.defaultConfig {
-    buildConfigField("String", "BASE_URL", "\"${secret("BASE_URL")}\"")
-    buildConfigField("String", "API_KEY", "\"${secret("API_KEY")}\"")
 }
 
 dependencies {
